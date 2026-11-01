@@ -1,6 +1,7 @@
 package com.example.capstone_3.Model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -38,11 +39,17 @@ public class Skill {
   @Column(columnDefinition = "varchar(100) not null")
   private String category;
 
+ @JsonIgnore
+
  @OneToMany(cascade =CascadeType.ALL,mappedBy = "skill")
  private Set<AccountSkill> accountSkills;
 
+ @JsonIgnore
+
  @OneToMany(cascade=CascadeType.ALL,mappedBy = "skill")
  private Set<LearningRequest>learningRequests;
+
+ @JsonIgnore
 
  @OneToMany(cascade = CascadeType.ALL,mappedBy = "skill")
  private Set<SkillOffer>skillOffers;
