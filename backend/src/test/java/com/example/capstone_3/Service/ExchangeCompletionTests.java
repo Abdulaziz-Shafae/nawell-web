@@ -16,7 +16,7 @@ class ExchangeCompletionTests {
     private final LearningRequestRepository requests = mock(LearningRequestRepository.class);
     private final TokenTransactionRepository transactions = mock(TokenTransactionRepository.class);
     private final ExchangeService service = new ExchangeService(new AccountAccessService(accounts), exchanges, accounts, requests,
-            mock(SkillOfferRepository.class), transactions, mock(AccountNameHelper.class), mock(BrevoEmailService.class), mock(WhatsAppService.class));
+            mock(SkillOfferRepository.class), transactions, mock(AccountNameHelper.class), mock(BrevoEmailService.class));
     private Exchange exchange;
     private Account provider;
 
