@@ -25,3 +25,15 @@
 .team-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.team-link{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px;border:1px solid var(--border,#dcdde2);border-radius:16px;background:var(--surface,#fff);color:inherit;text-decoration:none;transition:transform .18s ease,border-color .18s ease}.team-link:hover,.team-link:focus-visible{transform:translateY(-2px);border-color:currentColor}.team-link>span:first-child{font-weight:700}.team-link>span:last-child{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;white-space:nowrap}@media(max-width:850px){.team-links{grid-template-columns:1fr}}
 /* Skill extraction results */
 .extraction-output{display:grid;gap:14px}.extraction-output h3,.extraction-output h4{margin:0}.extraction-output p{margin:0;color:var(--muted,#64748b)}.extraction-group{display:grid;gap:8px}.extraction-group h4{display:flex;align-items:center;gap:9px}.extraction-count{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 7px;border-radius:999px;background:#edf4f5;color:#24505a;font-size:.8rem}.extraction-chips{display:flex;flex-wrap:wrap;gap:8px}.extraction-chip{padding:7px 11px;border:1px solid #d9e4e7;border-radius:999px;background:#f8fbfc;font-size:.9rem;overflow-wrap:anywhere}.extraction-output .extraction-output{box-shadow:none;border:0;padding:0}
+
+/* Searchable skill selection */
+.skill-search-picker{position:relative;min-width:240px;max-width:420px;flex:1;z-index:5}
+.skill-search-field{display:flex;align-items:center;gap:9px;background:#fcfbf7;border:1px solid var(--line);border-radius:7px;padding:0 12px;min-height:45px}
+.skill-search-field input{border:0;outline:0;background:transparent;color:var(--ink);font:inherit;width:100%;min-width:0;padding:10px 2px}
+.skill-search-field:focus-within{outline:2px solid #d79b34;outline-offset:2px}
+.skill-search-results{position:absolute;top:calc(100% + 5px);inset-inline:0;max-height:260px;overflow:auto;background:#fffefa;border:1px solid var(--line);border-radius:8px;box-shadow:0 14px 30px rgba(0,0,0,.12);z-index:40}
+.skill-search-results button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;text-align:start;cursor:pointer}
+.skill-search-results button:hover,.skill-search-results button:focus-visible{background:#f3efe5;outline:0}
+.skill-search-results small{color:var(--muted);font-size:11px}
+.skill-search-empty{padding:14px;color:var(--muted)}
+@media(max-width:680px){.skill-search-picker{min-width:100%;max-width:none}}
