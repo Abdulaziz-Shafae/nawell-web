@@ -12,6 +12,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.*;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /** HTTP integration boundary. Existing controller paths and business services are preserved. */
 @Configuration
@@ -29,6 +31,10 @@ public class WebIntegrationConfig implements WebMvcConfigurer {
     @Override public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new HandlerInterceptor() {
             @Override public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
+                res.setHeader("X-Content-Type-Options", "nosniff");
+                res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+                res.setHeader("X-Frame-Options", "DENY");
+                res.setHeader("Cache-Control", "no-store");
                 if ("OPTIONS".equals(req.getMethod())) return true;
                 String path = req.getRequestURI().substring(req.getContextPath().length());
                 boolean read = "GET".equals(req.getMethod());
@@ -37,8 +43,7 @@ public class WebIntegrationConfig implements WebMvcConfigurer {
                 String origin = req.getHeader("Origin");
                 if (!read && origin != null && Arrays.stream(origins.split(",")).noneMatch(origin::equals))
                     return deny(res, 403, "Request origin is not allowed");
-                if ((!read && "POST".equals(req.getMethod()) && path.equals("/api/v1/media/images"))
-                        || (read && path.matches("/api/v1/media/images/[a-f0-9-]+\\.(png|jpg)"))) return true;
+                if (read && path.matches("/api/v1/media/images/[a-f0-9-]+\\.(png|jpg)")) return true;
                 if (path.matches("/api/v1/account/(login|register/(individual|company)|verify-email)")) return true;
                 if (read && (path.equals("/api/v1/health") || path.equals("/api/v1/skill/get") || path.matches("/api/v1/skill-offer/(available|skill/\\d+|provider/\\d+)")
                         || path.startsWith("/api/v1/search/") || path.matches("/api/v1/review/account/\\d+(/average)?"))) return true;

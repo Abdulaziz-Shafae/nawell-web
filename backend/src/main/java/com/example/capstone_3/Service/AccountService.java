@@ -16,6 +16,8 @@ import com.example.capstone_3.DtoOut.CompanyProfileDtoOut;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -26,6 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountAccessService accountAccessService;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private final AccountRepository accountRepository;
     private final IndividualProfileRepository individualProfileRepository;
@@ -52,7 +55,7 @@ public class AccountService {
         Account account = new Account();
 
         account.setEmail(accountDtoIn.getEmail());
-        account.setPassword(accountDtoIn.getPassword());
+        account.setPassword(passwordEncoder.encode(accountDtoIn.getPassword()));
         account.setAccountType(accountDtoIn.getAccountType());
 
         account.setTokenBalance(3);
@@ -79,7 +82,7 @@ public class AccountService {
         }
 
         oldAccount.setEmail(accountDtoIn.getEmail());
-        oldAccount.setPassword(accountDtoIn.getPassword());
+        oldAccount.setPassword(passwordEncoder.encode(accountDtoIn.getPassword()));
         oldAccount.setAccountType(accountDtoIn.getAccountType());
 
         accountRepository.save(oldAccount);
@@ -98,9 +101,23 @@ public class AccountService {
     }
 
 
+    @Transactional
     public Integer login(LoginDtoIn loginDtoIn) {
 
-        Account oldAcc = accountRepository.findAccountByEmailAndPassword(loginDtoIn.getEmail(), loginDtoIn.getPassword());
+        Account oldAcc = accountRepository.findAccountByEmail(loginDtoIn.getEmail());
+        String stored = oldAcc == null ? null : oldAcc.getPassword();
+        boolean bcryptHash = stored != null && stored.matches("^\\$2[aby]\\$[0-9]{2}\\$.{53}$");
+        boolean valid = stored != null && (bcryptHash
+                ? passwordEncoder.matches(loginDtoIn.getPassword(), stored)
+                : java.security.MessageDigest.isEqual(
+                    stored.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                    loginDtoIn.getPassword().getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        if (!valid) throw new ApiException("Invalid email or password");
+        // Migrate legacy plaintext credentials only after a successful login.
+        if (!bcryptHash) {
+            oldAcc.setPassword(passwordEncoder.encode(loginDtoIn.getPassword()));
+            accountRepository.save(oldAcc);
+        }
 
         if (oldAcc == null) {
             throw new ApiException("Invalid email or password");
@@ -127,7 +144,7 @@ public class AccountService {
         Account account = new Account();
 
         account.setEmail(dtoIn.getEmail());
-        account.setPassword(dtoIn.getPassword());
+        account.setPassword(passwordEncoder.encode(dtoIn.getPassword()));
         account.setAccountType("INDIVIDUAL");
         account.setTokenBalance(3);
         account.setStatus("ACTIVE");
@@ -164,7 +181,7 @@ public class AccountService {
         Account account = new Account();
 
         account.setEmail(dtoIn.getEmail());
-        account.setPassword(dtoIn.getPassword());
+        account.setPassword(passwordEncoder.encode(dtoIn.getPassword()));
         account.setAccountType("COMPANY");
         account.setTokenBalance(3);
         account.setStatus("ACTIVE");
