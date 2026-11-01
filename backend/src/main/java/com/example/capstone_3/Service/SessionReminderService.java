@@ -5,6 +5,7 @@ import com.example.capstone_3.Model.Session;
 import com.example.capstone_3.Repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@ConditionalOnProperty(name = "app.reminders.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 public class SessionReminderService {
 

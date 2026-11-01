@@ -45,3 +45,6 @@ The uploaded backend's plaintext password persistence remains unchanged and docu
 Deployment files have been prepared locally. Docker/Railway execution and real provider delivery still require the Railway project and credentials; they are not claimed as completed by local builds.
 
 References: [Railway variables](https://docs.railway.com/variables/reference), [Dockerfiles](https://docs.railway.com/builds/dockerfiles), [configuration as code](https://docs.railway.com/config-as-code), [private networking](https://docs.railway.com/networking/private-networking), [official nginx entrypoint](https://github.com/nginx/docker-nginx/blob/master/entrypoint/docker-entrypoint.sh).
+
+## Idle sleep and reminders
+Enable **Serverless** for frontend and backend under Deploy settings and redeploy each service. Sleep depends on *outbound* packet inactivity, so an active MySQL connection pool may still prevent backend sleep. `REMINDERS_ENABLED=false` disables the periodic session reminder check to reduce background database traffic. **No automatic one-hour-before-session reminder emails will be sent when disabled.** User-triggered notification emails remain enabled. For guaranteed scheduled reminders, use a separate scheduled worker and accept its usage cost.
