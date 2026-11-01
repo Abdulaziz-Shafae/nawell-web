@@ -1,5 +1,11 @@
+import { translate } from './i18n';
 export class ApiError extends Error {
- constructor(message, status, payload) { super(message); this.status = status; this.payload = payload; }
+ constructor(message, status, payload) {
+  const lang=localStorage.getItem('nawall-language') || 'en';
+  const translated=translate(lang)(message);
+  super(lang==='ar' && translated===message && /[A-Za-z]/.test(message) ? 'تعذر إكمال الطلب حاول مرة أخرى' : translated);
+  this.status=status;this.payload=payload;
+ }
 }
 export const routes = {
  uploadImage: ['POST','/api/v1/media/images'], image: ['GET','/api/v1/media/images/{name}'],
