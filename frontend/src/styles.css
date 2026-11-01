@@ -37,3 +37,9 @@
 .skill-search-results small{color:var(--muted);font-size:11px}
 .skill-search-empty{padding:14px;color:var(--muted)}
 @media(max-width:680px){.skill-search-picker{min-width:100%;max-width:none}}
+
+/* Keep assessment numbering separate from mixed Arabic/English question text */
+.assessment-question-heading{display:flex;flex-direction:column;gap:8px;align-items:stretch;text-align:start}
+.assessment-question-number{font-weight:700;color:var(--ink)}
+.assessment-question-text{display:block;unicode-bidi:plaintext;text-align:start;line-height:1.9;overflow-wrap:anywhere}
+.assessment-question textarea{direction:auto;text-align:start;unicode-bidi:plaintext}

@@ -970,28 +970,25 @@ public class AIService {
        if ("EXPERT".equals(accountSkill.getLevel())) {
            throw new ApiException("You already have the highest level in this skill");
        }
-       String prompt = "Write 5 short questions to test someone in the skill '" + accountSkill.getSkill().getName() + "', "
-               + ("ar".equals(language) ? "Write all questions in clear Modern Standard Arabic, keeping technical terms when helpful. " : "Write all questions in English. ")
-               + "from easy to hard. Start each question with Q1, Q2, Q3, Q4, Q5. Write each question on a new line. "
-               + "Do not write the answers. Do not use markdown.";
-       String aiAnswer = askAI(prompt);
-       List<String> lines = toLines(aiAnswer);
-
-       //تحت كل سؤال نحط مكان الاجابة
+       if (!"ar".equals(language) && !"en".equals(language)) throw new ApiException("Invalid language");
+       String prompt = "Create exactly five short skill assessment questions for the skill '" + accountSkill.getSkill().getName() + "'. "
+               + "Difficulty: easy to hard. Language: " + ("ar".equals(language) ? "Arabic, with natural Arabic sentences and English only for necessary technical identifiers" : "English") + ". "
+               + "Return ONLY a valid JSON array of exactly five plain question strings. "
+               + "Do not add Q1/Q2 prefixes, markdown, answers or explanations. "
+               + "Never translate technical code identifiers.";
+       JsonNode generated = parseJson(askAI(prompt));
+       if (!generated.isArray() || generated.size() != 5) throw new ApiException("AI did not return five valid questions");
        List<String> questions = new ArrayList<>();
-       for (int i = 0; i < lines.size(); i++) {
-           questions.add(lines.get(i));
-           questions.add("A" + (i + 1) + "= ------");
+       for (JsonNode node : generated) {
+           if (!node.isTextual() || node.asText().isBlank()) throw new ApiException("AI did not return valid questions");
+           questions.add(node.asText().trim().replaceFirst("^(?i:Q|Question|سؤال)\\s*[1-5]\\s*[:.)-]?\\s*", ""));
        }
-
        AssessmentQuestionsDtoOut dto = new AssessmentQuestionsDtoOut();
        dto.setAccountSkillId(accountSkillId);
        dto.setSkillName(accountSkill.getSkill().getName());
        dto.setCurrentLevel(accountSkill.getLevel());
-       dto.setQuestions(toLines(aiAnswer));
        dto.setQuestions(questions);
        return dto;
-
 
 
 
