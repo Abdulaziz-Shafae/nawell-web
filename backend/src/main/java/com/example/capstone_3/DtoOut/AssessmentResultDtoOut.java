@@ -12,5 +12,6 @@ public class AssessmentResultDtoOut {
     private Integer score;
     private String assessedLevel;
     private Boolean passed;
+    private java.util.List<java.util.Map<String,Object>> questionResults;
 
 }
