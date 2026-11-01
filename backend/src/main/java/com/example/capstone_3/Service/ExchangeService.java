@@ -26,7 +26,6 @@ public class ExchangeService {
     private final TokenTransactionRepository tokenTransactionRepository;
     private final AccountNameHelper accountNameHelper;
     private final BrevoEmailService brevoEmailService;
-    private final WhatsAppService whatsAppService;
 
     public List<Exchange> get(){
         return exchangeRepository.findAll();
@@ -200,19 +199,7 @@ public class ExchangeService {
 
         brevoEmailService.sendEmail(provider.getEmail(), subject, text);
 
-        try {
-            String phone;
-
-            if (provider.getIndividualProfile() != null) {
-                phone = provider.getIndividualProfile().getPhone();
-            } else {
-                phone = provider.getCompanyProfile().getPhone();
-            }
-
-            whatsAppService.sendMessage(phone, text);
-        } catch (Exception e) {
-            System.out.println("WhatsApp message failed: " + e.getMessage());
-        }
+        
     }
 
     @Transactional
@@ -357,19 +344,7 @@ public class ExchangeService {
 
         brevoEmailService.sendEmail(requester.getEmail(), subject, text);
 
-        try {
-            String phone;
-
-            if (requester.getIndividualProfile() != null) {
-                phone = requester.getIndividualProfile().getPhone();
-            } else {
-                phone = requester.getCompanyProfile().getPhone();
-            }
-
-            whatsAppService.sendMessage(phone, text);
-        } catch (Exception e) {
-            System.out.println("WhatsApp message failed: " + e.getMessage());
-        }
+        
 
     }
 
@@ -402,27 +377,7 @@ public class ExchangeService {
             saveTokenTransaction(requester, exchange, amount, "REFUND", "Refund for cancelled exchange");
 
             exchange.setTokensReserved(false);
-            try {
-                String phone;
-                String name;
-                if (requester.getIndividualProfile() != null) {
-                    phone = requester.getIndividualProfile().getPhone();
-                    name = requester.getIndividualProfile().getName();
-                } else {
-                    phone = requester.getCompanyProfile().getPhone();
-                    name = requester.getCompanyProfile().getName();
-                }
-
-                whatsAppService.sendMessage(
-                        phone,
-                        "Hello " + name + " 👋\n\n" +
-                                "Your exchange #" + exchange.getId() + " has been cancelled.\n" +
-                                "✅ " + amount + " tokens have been refunded to your account.\n\n" +
-                                "Your current balance: " + (requester.getTokenBalance() + amount) + " tokens 💰"
-                );
-            } catch (Exception e) {
-                System.out.println("WhatsApp message failed: " + e.getMessage());
-            }
+            
         }
 
         exchange.setStatus("CANCELLED");
@@ -453,22 +408,7 @@ public class ExchangeService {
 
         brevoEmailService.sendEmail(recipient.getEmail(), subject, text);
 
-        try {
-            String phone;
-
-            if (recipient.getIndividualProfile() != null) {
-                phone = recipient.getIndividualProfile().getPhone();
-            } else {
-                phone = recipient.getCompanyProfile().getPhone();
-            }
-
-            if (!recipient.getId().equals(learner.getId()) || refundedTokens == 0) {
-                whatsAppService.sendMessage(phone, text);
-            }
-
-        } catch (Exception e) {
-            System.out.println("WhatsApp message failed: " + e.getMessage());
-        }
+        
 
         if (cancelledBy.getId().equals(learner.getId())) {
             String refundText = "Hello " + accountNameHelper.getAccountName(learner)

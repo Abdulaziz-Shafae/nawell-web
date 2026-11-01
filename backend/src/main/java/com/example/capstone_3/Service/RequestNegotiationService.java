@@ -30,7 +30,6 @@ public class RequestNegotiationService {
     private final LearningRequestRepository learningRequestRepository;
     private final AccountNameHelper accountNameHelper;
     private final BrevoEmailService brevoEmailService;
-    private final WhatsAppService whatsAppService;
 
     public List<RequestNegotiation> get() {
         return requestNegotiationRepository.findAll();
@@ -138,19 +137,7 @@ public class RequestNegotiationService {
 
         brevoEmailService.sendEmail(recipient.getEmail(), subject, text);
 
-        try {
-            String phone;
-
-            if (recipient.getIndividualProfile() != null) {
-                phone = recipient.getIndividualProfile().getPhone();
-            } else {
-                phone = recipient.getCompanyProfile().getPhone();
-            }
-
-            whatsAppService.sendMessage(phone, text);
-        } catch (Exception e) {
-            System.out.println("WhatsApp message failed: " + e.getMessage());
-        }
+        
 
     }
 
@@ -453,7 +440,6 @@ public class RequestNegotiationService {
 
         brevoEmailService.sendEmail(recipient.getEmail(), subject, text);
 
-        // whatsapp
     }
 
 }

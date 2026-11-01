@@ -1,8 +1,8 @@
-# Nawall · ناول
+# Nawell · نوال
 
 React + Vite frontend connected to the latest uploaded Capstone 3 Spring Boot backend. The projects live separately in `/frontend` and `/backend`. No Loot code or layout was reused.
 
-The visual direction comes from the supplied **Nawell · ناول.pdf**: ivory `#f4f1e9`, navy `#17223b`, crimson `#ba1238`, condensed display lettering, and the presentation's city/handshake collage. The requested product/repository name is **Nawall**. Fonts are bundled locally. Arabic switches the document to RTL; English uses LTR. User content and backend validation messages retain their source language.
+The visual direction comes from the supplied **Nawell · نوال.pdf**: ivory `#f4f1e9`, navy `#17223b`, crimson `#ba1238`, condensed display lettering, and the presentation's city/handshake collage. The requested product/repository name is **Nawell**. Fonts are bundled locally. Arabic switches the document to RTL; English uses LTR. User content and backend validation messages retain their source language.
 
 ## Start locally
 
@@ -81,7 +81,7 @@ Enable **Preserve log** in Developer Tools → Network, select Fetch/XHR, then u
 * Join a session: `POST /api/v1/session/{sessionId}/join/{exchangeId}`.
 * CV: `POST /api/v1/ai/cv/extract-skills` with a real multipart `file` field; the browser supplies its boundary.
 
-Negotiation dates use `yyyy-MM-dd HH:mm`; session dates use ISO local datetime. The interface labels and displays dates in Asia/Riyadh. Fetch preserves server error messages. Backend integration requests to Brevo, UltraMsg, Zoom, Apify and OpenAI happen **server-side**; browser Network shows the Nawall endpoint and response, not secret-bearing provider requests. WhatsApp notifications are triggered by supported request/exchange workflows. The uploaded session reminder scheduler sends email; there is no separate WhatsApp reminder endpoint, and none was invented.
+Negotiation dates use `yyyy-MM-dd HH:mm`; session dates use ISO local datetime. The interface labels and displays dates in Asia/Riyadh. Fetch preserves server error messages. Backend integration requests to Brevo, UltraMsg, Zoom, Apify and OpenAI happen **server-side**; browser Network shows the Nawell endpoint and response, not secret-bearing provider requests. WhatsApp notifications are triggered by supported request/exchange workflows. The uploaded session reminder scheduler sends email; there is no separate WhatsApp reminder endpoint, and none was invented.
 
 The user's original Network-tab instruction was cut off after its arrow. The implementation follows the explicit real-request/exact-route requirements; any additional requested Network behavior still needs that missing text.
 

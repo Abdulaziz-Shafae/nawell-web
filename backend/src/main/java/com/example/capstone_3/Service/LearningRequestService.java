@@ -26,7 +26,6 @@ public class LearningRequestService {
     private final AccountSkillRepository accountSkillRepository;
     private final AccountNameHelper accountNameHelper;
     private final BrevoEmailService brevoEmailService;
-    private final WhatsAppService whatsAppService;
 
     public List<LearningRequest> getAllLearningRequests() {
         return learningRequestRepository.findAll();
@@ -122,19 +121,7 @@ public class LearningRequestService {
 
         brevoEmailService.sendEmail(providerAccount.getEmail(), subject, text);
 
-        try {
-            String phone;
-
-            if (providerAccount.getIndividualProfile() != null) {
-                phone = providerAccount.getIndividualProfile().getPhone();
-            } else {
-                phone = providerAccount.getCompanyProfile().getPhone();
-            }
-
-            whatsAppService.sendMessage(phone, text);
-        } catch (Exception e) {
-            System.out.println("WhatsApp message failed: " + e.getMessage());
-        }
+        
 
     }
 

@@ -18,7 +18,7 @@ public class SessionReminderService {
     private final SessionRepository sessionRepository;
     private final BrevoEmailService brevoEmailService;
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedDelayString = "${app.reminders.poll-ms:300000}")
     @Transactional
     public void sendSessionReminders() {
 

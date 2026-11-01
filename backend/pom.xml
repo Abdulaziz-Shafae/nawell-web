@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>Capstone_3</artifactId>
+    <artifactId>nawell</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Capstone_3</name>
-    <description>Capstone_3</description>
+    <name>NAWELL</name>
+    <description>NAWELL skill exchange platform</description>
     <url/>
     <licenses>
         <license/>

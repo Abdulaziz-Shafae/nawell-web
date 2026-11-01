@@ -41,7 +41,7 @@ public class BrevoEmailService {
         Map<String, Object> body = Map.of(
                 "sender", Map.of("name", senderName, "email", senderEmail),
                 "to", List.of(Map.of("email", recipientEmail)),
-                "subject", "Verify your Skill Exchange email",
+                "subject", "Verify your NAWELL email",
                 "textContent", "Click the link below to verify your account:\n\n" + verificationLink + "\n\nThis link expires in 24 hours. If you did not request it, ignore this email."
         );
 
