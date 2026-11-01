@@ -59,6 +59,8 @@ public class WebIntegrationConfig implements WebMvcConfigurer {
                     boolean maintenance = action.equals("get") || action.equals("add") || action.equals("update") || action.equals("delete");
                     // Creating a review is a participant workflow, not generic maintenance.
                     if (resource.equals("review") && action.equals("add") && parts.length == 6) maintenance = false;
+                    // Adding a catalog skill to the signed-in account is a user action, not admin maintenance.
+                    if (resource.equals("account-skill") && action.equals("add") && parts.length == 6 && "POST".equals(req.getMethod())) maintenance = false;
                     if (resource.equals("agreement") && action.equals("add")) maintenance = false;
                     if (maintenance && !admin) {
                         if (parts.length != 6 || !(action.equals("update") || action.equals("delete")))
