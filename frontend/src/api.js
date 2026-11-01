@@ -1,7 +1,7 @@
 import { translate } from './i18n.js';
 export class ApiError extends Error {
  constructor(message, status, payload) {
-  const lang=localStorage.getItem('nawall-language') || 'en';
+  const lang=globalThis.localStorage?.getItem('nawall-language') || 'en';
   const translated=translate(lang)(message);
   super(lang==='ar' && translated===message && /[A-Za-z]/.test(message) ? 'تعذر إكمال الطلب حاول مرة أخرى' : translated);
   this.status=status;this.payload=payload;
