@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "pending_signup", indexes = @Index(name = "idx_pending_signup_token", columnList = "tokenHash", unique = true))
 public class PendingSignup {
  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
- @Column(nullable = false, length = 150) private String email;
+ @Column(nullable = false, unique = true, length = 150) private String email;
  @Column(nullable = false, length = 255) private String passwordHash;
  @Column(nullable = false, length = 20) private String accountType;
  @Column(nullable = false, length = 150) private String name;

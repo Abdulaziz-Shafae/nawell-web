@@ -19,7 +19,7 @@ function Landing() {
 }
 function Auth({register = false}) {
  const {t,setUser} = useApp(); const navigate = useNavigate(); const [type,setType]=useState('INDIVIDUAL');
- const fields = [f('email',{required:true,type:'email',maxLength:150}),f('password',{required:true,type:'password',minLength:8,maxLength:255}),...(register?profileFields(type==='COMPANY'):[])];
+ const fields = [f('email',{required:true,type:'email',maxLength:150}),f('password',{required:true,type:'password',minLength:8,maxLength:255}),...(register?profileFields(type==='COMPANY').filter(field=>field.type!=='image'):[])];
  return <div className="auth-layout"><div className="auth-story"><span className="eyebrow">NAWELL · ناول</span><h1>{t('Knowledge becomes currency.')}</h1><div className="auth-art"><img src="/reference-Im0.jpg" alt=""/></div><p>{t('Teach what you know.')}<br/>{t('Learn what you need.')}</p></div><div className="auth-card"><div className="eyebrow">{t(register?'Your first 3 tokens are on us.':'Welcome back')}</div><h1>{t(register?'Create account':'Log in')}</h1>{register && <div className="tabs">{['INDIVIDUAL','COMPANY'].map(v=><button key={v} className={type===v?'selected':''} onClick={()=>setType(v)}>{t(v)}</button>)}</div>}<Form key={type} fields={fields} label={register?'Create account':'Log in'} submit={async body=> {if(register) {const started=await api(type==='COMPANY'?'signupCompany':'signupIndividual',{}, {body});navigate('/signup-check');return {message:t('Check your email to complete registration','أرسلنا رسالة تأكيد إلى بريدك الإلكتروني')};} await api('login',{}, {body:{email:body.email,password:body.password}}); const profile=await api('profile');setUser(profile);navigate('/dashboard');return {message:t('Welcome back')};}}/><p className="auth-switch">{t(register?'Already a member?':'New to Nawell?')} <Link to={register?'/login':'/register'}>{t(register?'Log in':'Join Nawell')}</Link></p></div></div>;
 }
 function Dashboard() {
@@ -34,7 +34,7 @@ function SignupConfirm(){
   const params=new URLSearchParams(window.location.search);const token=params.get('token');
   window.history.replaceState({},'', '/verify-signup');
   if(!token){setStatus('invalid');return;}
-  let alive=true; api('confirmSignup',{}, {query:{token}}).then(async()=>{await refreshUser();if(alive)setStatus('verified');}).catch(()=>{if(alive)setStatus('invalid');});
+  let alive=true; api('confirmSignup',{}, {body:{token}}).then(async()=>{await refreshUser();if(alive)setStatus('verified');}).catch(()=>{if(alive)setStatus('invalid');});
   return ()=>{alive=false;};
  },[refreshUser]);
  return <div className="page narrow"><section className="panel" style={{textAlign:'center',padding:'3rem 1.5rem'}}><h1>{status==='loading'?t('Confirming your email','جارٍ تأكيد بريدك الإلكتروني'):status==='verified'?t('Your account is ready','حسابك جاهز الآن'):t('Verification link invalid or expired','رابط التحقق غير صالح أو انتهت صلاحيته')}</h1><p>{status==='verified'?t('Welcome to NAWELL','أهلًا بك في ناول'):status==='loading'?t('Please wait a moment','انتظر لحظة'):t('Please register again','يرجى إعادة التسجيل')}</p><Link className="btn primary" to={status==='verified'?'/dashboard':'/register'}>{status==='verified'?t('Go to dashboard','الانتقال إلى لوحة التحكم'):t('Register','إنشاء حساب')}</Link></section></div>;

@@ -75,20 +75,6 @@ public class AccountController {
         return ResponseEntity.status(200).body(new ApiResponse("Logged out successfully"));
     }
 
-    @PostMapping("/register/individual")
-    public ResponseEntity<?> registerIndividual(@RequestBody @Valid RegisterIndividualDtoIn registerIndividualDtoIn) {
-
-        accountService.registerIndividual(registerIndividualDtoIn);
-
-        return ResponseEntity.status(200).body(new ApiResponse("Individual account registered successfully"));
-    }
-
-    @PostMapping("/register/company")
-    public ResponseEntity<?> registerCompany(@RequestBody @Valid RegisterCompanyDtoIn registerCompanyDtoIn) {
-        accountService.registerCompany(registerCompanyDtoIn);
-        return ResponseEntity.status(200).body(new ApiResponse("Company account registered successfully"));
-    }
-
     @PostMapping("/send-verification-email")
     public ResponseEntity<?> sendVerificationEmail(HttpSession session) {
 
@@ -123,8 +109,9 @@ public class AccountController {
         return ResponseEntity.ok(new ApiResponse("Check your email to complete registration"));
     }
 
-    @GetMapping("/signup/confirm")
-    public ResponseEntity<?> confirmSignup(@RequestParam String token, HttpServletRequest request) {
+    @PostMapping("/signup/confirm")
+    public ResponseEntity<?> confirmSignup(@RequestBody java.util.Map<String,String> input, HttpServletRequest request) {
+        String token=input.get("token");
         Integer id=pendingSignupService.confirm(token);
         request.getSession(true);
         request.changeSessionId();
