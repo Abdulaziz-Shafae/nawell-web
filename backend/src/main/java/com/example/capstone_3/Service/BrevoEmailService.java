@@ -73,6 +73,29 @@ public class BrevoEmailService {
         }
     }
 
+    /** Branded notification layout. Escape all dynamic content before placing it in HTML. */
+    private String notificationHtml(String subject, String message) {
+        String title = escapeHtml(subject);
+        String body = escapeHtml(message).replace("\n", "<br>");
+        return """
+                <!doctype html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"></head>
+                <body style="margin:0;padding:32px 12px;background:#f3f7fa;font-family:Tahoma,Arial,sans-serif;color:#1f2d3d">
+                <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;max-width:540px;margin:0 auto;background:#fff;border-radius:20px;border:1px solid #e4edf2">
+                <tr><td style="padding:36px 30px;text-align:center">
+                <div style="font-size:30px;font-weight:800;color:#176c86;letter-spacing:2px">NAWELL</div>
+                <div style="font-size:18px;font-weight:bold;color:#176c86;margin-top:5px">ناول</div>
+                <h1 style="font-size:23px;line-height:1.5;margin:28px 0 16px">__TITLE__</h1>
+                <p style="font-size:16px;line-height:1.9;color:#526474;margin:0">__BODY__</p>
+                <p style="font-size:13px;color:#7c8b98;margin-top:32px">NAWELL · ناول</p>
+                </td></tr></table></body></html>
+                """.replace("__TITLE__", title).replace("__BODY__", body);
+    }
+
+    private String escapeHtml(String value) {
+        return value == null ? "" : value.replace("&", "&amp;")
+                .replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
+    }
+
     // ارسال ايميل عام (نعطيه العنوان والنص) لاشعارات التوكنز
     public void sendEmail(String recipientEmail, String subject, String text) {
         if (apiKey.isBlank() || senderEmail.isBlank()) {
@@ -88,7 +111,8 @@ public class BrevoEmailService {
                         Map.of("email", recipientEmail)
                 ),
                 "subject", subject,
-                "textContent", text
+                "textContent", text,
+                "htmlContent", notificationHtml(subject, text)
         );
 
         try {
@@ -123,7 +147,8 @@ public class BrevoEmailService {
                         Map.of("email", recipientEmail)
                 ),
                 "subject", subject,
-                "textContent", message
+                "textContent", message,
+                "htmlContent", notificationHtml(subject, message)
         );
 
         try {
