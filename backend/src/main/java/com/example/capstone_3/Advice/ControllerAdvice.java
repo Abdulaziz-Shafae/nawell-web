@@ -37,13 +37,13 @@ public class ControllerAdvice {
     // handle if the entered id while he should not
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<?> handleWritingId(ObjectOptimisticLockingFailureException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
+        return ResponseEntity.status(400).body(new ApiResponse("Invalid request or conflicting data"));
     }
 
     //handle the database side constrain SQL
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleDataIntegrity(DataIntegrityViolationException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
+        return ResponseEntity.status(400).body(new ApiResponse("Invalid request or conflicting data"));
     }
 
     //for invalid type
