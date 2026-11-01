@@ -33,21 +33,42 @@ public class BrevoEmailService {
     }
 
     public void sendVerificationEmail(String recipientEmail, String verificationLink) {
-
         if (apiKey.isBlank() || senderEmail.isBlank()) {
             throw new ApiException("Email service is not configured");
         }
-
+        // The verification URL is present only behind the action button, not as visible text.
+        String safeLink = verificationLink.replace("&", "&amp;").replace("\"", "&quot;")
+                .replace("<", "&lt;").replace(">", "&gt;");
+        String html = """
+                <!doctype html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"></head>
+                <body style="margin:0;padding:32px 12px;background:#f3f7fa;font-family:Tahoma,Arial,sans-serif;color:#1f2d3d">
+                <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%%;max-width:540px;margin:0 auto;background:#fff;border-radius:20px;border:1px solid #e4edf2">
+                <tr><td style="padding:36px 30px;text-align:center">
+                <div style="font-size:30px;font-weight:800;color:#176c86;letter-spacing:2px">NAWELL</div>
+                <div style="font-size:18px;font-weight:bold;color:#176c86;margin-top:5px">ناول</div>
+                <h1 style="font-size:25px;line-height:1.5;margin:30px 0 12px">تأكيد البريد الإلكتروني</h1>
+                <p style="font-size:16px;line-height:1.9;color:#526474;margin:0 0 28px">أهلًا بك في ناول! اضغط الزر التالي لتأكيد بريدك الإلكتروني والبدء في تبادل المهارات</p>
+                <a href="%s" style="display:inline-block;background:#176c86;color:#fff;text-decoration:none;padding:15px 34px;border-radius:12px;font-size:16px;font-weight:bold">تأكيد البريد الإلكتروني</a>
+                <p style="font-size:13px;line-height:1.8;color:#7c8b98;margin:28px 0 0">الزر صالح لمدة 24 ساعة. إذا لم تطلب هذه الرسالة، يمكنك تجاهلها</p>
+                </td></tr></table>
+                <p style="text-align:center;font-size:12px;color:#8a98a4;margin-top:20px">NAWELL · ناول</p>
+                </body></html>
+                """.formatted(safeLink);
         Map<String, Object> body = Map.of(
                 "sender", Map.of("name", senderName, "email", senderEmail),
                 "to", List.of(Map.of("email", recipientEmail)),
-                "subject", "Verify your NAWELL email",
-                "textContent", "Click the link below to verify your account:\n\n" + verificationLink + "\n\nThis link expires in 24 hours. If you did not request it, ignore this email."
+                "subject", "ناول | تأكيد البريد الإلكتروني",
+                "htmlContent", html,
+                "textContent", "أهلًا بك في ناول. افتح الرسالة بصيغة HTML واضغط زر تأكيد البريد الإلكتروني. تنتهي صلاحية الطلب بعد 24 ساعة."
         );
-
         try {
-            restClient.post().uri("/smtp/email").header("api-key", apiKey).contentType(MediaType.APPLICATION_JSON).body(body).retrieve().toBodilessEntity();
-        } catch (RestClientException exception) {
+            restClient.post().uri("/smtp/email").header("api-key", apiKey)
+                    .contentType(MediaType.APPLICATION_JSON).body(body).retrieve().toBodilessEntity();
+        } catch (org.springframework.web.client.RestClientResponseException e) {
+            System.err.println("Brevo verification email rejected with HTTP " + e.getStatusCode().value());
+            throw new ApiException("Could not send verification email. Please try again later");
+        } catch (RestClientException e) {
+            System.err.println("Brevo verification email request failed: " + e.getClass().getSimpleName());
             throw new ApiException("Could not send verification email. Please try again later");
         }
     }
