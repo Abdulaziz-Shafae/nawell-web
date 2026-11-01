@@ -349,7 +349,6 @@ public class ExchangeService {
     }
 
     @Transactional
-    @Transactional
     public void cancelExchange(Integer accountId, Integer exchangeId) {
 
         Exchange exchange = getExchangeForAction(accountId, exchangeId);
