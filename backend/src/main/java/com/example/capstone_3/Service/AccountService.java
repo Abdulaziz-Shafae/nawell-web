@@ -119,10 +119,6 @@ public class AccountService {
             accountRepository.save(oldAcc);
         }
 
-        if (oldAcc == null) {
-            throw new ApiException("Invalid email or password");
-        }
-
         accountAccessService.checkActive(oldAcc);
 
         return oldAcc.getId();

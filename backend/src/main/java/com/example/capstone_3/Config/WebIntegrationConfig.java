@@ -12,8 +12,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.*;
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.HandlerInterceptor;
 
 /** HTTP integration boundary. Existing controller paths and business services are preserved. */
 @Configuration

@@ -19,7 +19,6 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account findAccountById(Integer id);
 
     Account findAccountByEmail(String email);
-    Account findAccountByEmailAndPassword(String email , String password);
 
     @Query(value = "SELECT * FROM account WHERE id = :id FOR UPDATE", nativeQuery = true)
     Account findAccountForVerification(@Param("id") Integer id);
