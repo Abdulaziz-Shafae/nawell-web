@@ -17,4 +17,5 @@ public class LinkedInAddSkillsDtoOut {
     private List<String> createdSkills;
     private List<String> addedSkills;
     private List<String> alreadyOwnedSkills;
+    private List<String> pendingSkills;
 }

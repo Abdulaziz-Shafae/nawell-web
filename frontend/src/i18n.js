@@ -9,4 +9,23 @@ export const translate = lang => (text, arabic) => {
  return typeof value === 'string' ? value.replace(/[،,]/g, '').replace(/\.{1,3}(?=\s|$)/g, '').replace(/…/g, '').replace(/\s{2,}/g, ' ').trim() : value;
 };
 
-Object.assign(ar, {FAIR:'عادل',OVERPRICED:'أعلى من السعر المناسب',UNDERPRICED:'أقل من السعر المناسب',INSUFFICIENT_INFORMATION:'معلومات غير كافية'});
+Object.assign(ar, {'Could not send verification email. Please try again later':'تعذر إرسال بريد التحقق حاول مرة أخرى',
+'Email already exists':'البريد الإلكتروني مستخدم بالفعل',
+'Phone already exists':'رقم الهاتف مستخدم بالفعل',
+'Please wait 60 seconds before requesting another email':'انتظر دقيقة قبل طلب رسالة أخرى',
+'Email verified successfully. You can close this page':'تم تأكيد بريدك الإلكتروني',
+'Email verified and account created successfully':'تم تأكيد البريد وإنشاء الحساب بنجاح',
+'Check your email to complete registration':'أرسلنا رابط التأكيد إلى بريدك الإلكتروني',
+'Invalid verification link':'رابط التحقق غير صالح',
+'Invalid or expired verification link':'رابط التحقق غير صالح أو انتهت صلاحيته',
+'Please log in first':'يرجى تسجيل الدخول أولًا',
+'Invalid email or password':'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+'Please select at least one skill':'اختر مهارة واحدة على الأقل',
+'Skill approved':'تم اعتماد المهارة',
+'Skill rejected':'تم رفض المهارة',
+'Skill already exists':'المهارة موجودة بالفعل',
+'Skills processed':'تمت معالجة المهارات',
+'Request failed. Please try again.':'تعذر إكمال الطلب حاول مرة أخرى',
+'Could not connect to the server. Please try again.':'تعذر الاتصال بالخادم حاول مرة أخرى',
+'The server is unavailable. Please try again later.':'الخادم غير متاح حاليًا حاول مرة أخرى',
+FAIR:'عادل',OVERPRICED:'أعلى من السعر المناسب',UNDERPRICED:'أقل من السعر المناسب',INSUFFICIENT_INFORMATION:'معلومات غير كافية'});

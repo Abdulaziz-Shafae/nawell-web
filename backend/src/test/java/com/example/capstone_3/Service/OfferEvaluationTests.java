@@ -22,7 +22,7 @@ class OfferEvaluationTests {
     private final SkillOfferRepository offers = mock(SkillOfferRepository.class);
     private final OpenAIClient client = mock(OpenAIClient.class, RETURNS_DEEP_STUBS);
     private final AIService service = new AIService(access, mock(SkillAssessmentService.class), mock(AccountRepository.class),
-            accountSkills, skills, offers, client, new ObjectMapper(), mock(LearningRequestRepository.class), mock(ExchangeRepository.class));
+            accountSkills, skills, mock(SkillSuggestionService.class), offers, client, new ObjectMapper(), mock(LearningRequestRepository.class), mock(ExchangeRepository.class));
     private final AccountSkill owned = new AccountSkill();
     private final OfferEvaluationDtoIn input = new OfferEvaluationDtoIn("20-minute Java variables session with two exercises", "ONLINE", 10, 1);
 

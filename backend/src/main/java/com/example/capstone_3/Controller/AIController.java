@@ -59,6 +59,11 @@ public class AIController {
         return ResponseEntity.status(200).body(aiService.getLinkedInSkills((Integer) session.getAttribute("accountId"), linkedInProfileDtoIn));
     }
 
+    @PostMapping("/skills/add-selected")
+    public ResponseEntity<?> addExtractedSkills(@RequestBody @Valid LinkedInAddSkillsDtoIn input, HttpSession session) {
+        return ResponseEntity.ok(aiService.addLinkedInSkills((Integer) session.getAttribute("accountId"), input));
+    }
+
     @PostMapping("/linkedin/add-skills")
     public ResponseEntity<?> addLinkedInSkills(@RequestBody @Valid LinkedInAddSkillsDtoIn linkedInAddSkillsDtoIn, HttpSession session) {
 
