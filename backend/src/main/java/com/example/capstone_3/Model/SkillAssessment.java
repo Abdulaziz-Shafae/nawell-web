@@ -40,6 +40,10 @@ public class SkillAssessment {
     private LocalDateTime attemptedAt;
 
 
+    @Lob
+    @Column(name = "review_details", columnDefinition = "LONGTEXT")
+    private String reviewDetails;
+
     @ManyToOne
     @JoinColumn(name = "account_skill_id", referencedColumnName = "id")
     @JsonIgnore
