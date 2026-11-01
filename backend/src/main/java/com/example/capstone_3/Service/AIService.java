@@ -964,13 +964,14 @@ public class AIService {
    }
 
 
-   public AssessmentQuestionsDtoOut generateAssessment(Integer accountId, Integer accountSkillId){
+   public AssessmentQuestionsDtoOut generateAssessment(Integer accountId, Integer accountSkillId, String language){
        accountAccessService.requireActive(accountId);
        AccountSkill accountSkill=getMyAccountSkill(accountId, accountSkillId);
        if ("EXPERT".equals(accountSkill.getLevel())) {
            throw new ApiException("You already have the highest level in this skill");
        }
        String prompt = "Write 5 short questions to test someone in the skill '" + accountSkill.getSkill().getName() + "', "
+               + ("ar".equals(language) ? "Write all questions in clear Modern Standard Arabic, keeping technical terms when helpful. " : "Write all questions in English. ")
                + "from easy to hard. Start each question with Q1, Q2, Q3, Q4, Q5. Write each question on a new line. "
                + "Do not write the answers. Do not use markdown.";
        String aiAnswer = askAI(prompt);
@@ -999,6 +1000,26 @@ public class AIService {
 
 
 
+
+    public List<String> translateAssessmentQuestions(Integer accountId, Integer accountSkillId, List<String> questions, String language) {
+        accountAccessService.requireActive(accountId);
+        getMyAccountSkill(accountId, accountSkillId);
+        if (questions == null || questions.size() != 5 || questions.stream().anyMatch(q -> q == null || q.length() > 1000)) {
+            throw new ApiException("Invalid assessment questions");
+        }
+        if (!"ar".equals(language) && !"en".equals(language)) throw new ApiException("Invalid language");
+        String prompt = "Translate the following five assessment questions into " + ("ar".equals(language) ? "Arabic" : "English") +
+                ". Preserve numbering, meaning, and difficulty exactly. Do not answer the questions. Return only a JSON array of five strings. Input: " +
+                objectMapper.valueToTree(questions);
+        JsonNode result = parseJson(askAI(prompt));
+        if (!result.isArray() || result.size() != 5) throw new ApiException("Unable to translate questions");
+        List<String> translated = new ArrayList<>();
+        for (JsonNode node : result) {
+            if (!node.isTextual() || node.asText().isBlank()) throw new ApiException("Unable to translate questions");
+            translated.add(node.asText());
+        }
+        return translated;
+    }
 
     public AssessmentResultDtoOut evaluateAssessment(Integer accountId, Integer accountSkillId, AIAssessmentDtoIn input){
         accountAccessService.requireActive(accountId);

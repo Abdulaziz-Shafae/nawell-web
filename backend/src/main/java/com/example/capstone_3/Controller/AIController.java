@@ -84,8 +84,18 @@ public class AIController {
 
     //7
     @PostMapping("/assessment/generate/{accountSkillId}")
-    public ResponseEntity<?> generateAssessment(@PathVariable Integer accountSkillId, HttpSession session) {
-        return ResponseEntity.status(200).body(aiService.generateAssessment((Integer) session.getAttribute("accountId"), accountSkillId));
+    public ResponseEntity<?> generateAssessment(@PathVariable Integer accountSkillId, @RequestParam(defaultValue = "en") String language, HttpSession session) {
+        return ResponseEntity.status(200).body(aiService.generateAssessment((Integer) session.getAttribute("accountId"), accountSkillId, language));
+    }
+
+    @PostMapping("/assessment/translate/{accountSkillId}")
+    public ResponseEntity<?> translateAssessment(@PathVariable Integer accountSkillId, @RequestBody java.util.Map<String,Object> payload, HttpSession session) {
+        Object values = payload.get("questions");
+        if (!(values instanceof java.util.List<?> list) || list.stream().anyMatch(x -> !(x instanceof String)))
+            throw new com.example.capstone_3.Api.ApiException("Invalid assessment questions");
+        String language = payload.get("language") instanceof String lang ? lang : "";
+        return ResponseEntity.ok(java.util.Map.of("questions",aiService.translateAssessmentQuestions(
+                (Integer) session.getAttribute("accountId"), accountSkillId, list.stream().map(String.class::cast).toList(), language)));
     }
 
     //8
