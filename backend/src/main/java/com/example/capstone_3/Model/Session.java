@@ -48,9 +48,6 @@ public class Session {
     @Column(length = 2000)
     private String meetingLink;
 
-    @JsonIgnore
-    @Column(unique = true)
-
     private String location;
 
     @NotBlank(message = "The session status can't be blank")
