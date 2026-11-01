@@ -1,4 +1,4 @@
-import { translate } from './i18n';
+import { translate } from './i18n.js';
 export class ApiError extends Error {
  constructor(message, status, payload) {
   const lang=localStorage.getItem('nawall-language') || 'en';
