@@ -50,7 +50,6 @@ public class Session {
 
     @JsonIgnore
     @Column(unique = true)
-    private Long zoomMeetingId;
 
     private String location;
 
@@ -73,7 +72,6 @@ public class Session {
     private Set<SessionParticipant> sessionParticipants;
 
     public Integer getSkillOfferId() { return skillOffer == null ? null : skillOffer.getId(); }
-    public Boolean getZoomLinked() { return zoomMeetingId != null; }
 
 }
 

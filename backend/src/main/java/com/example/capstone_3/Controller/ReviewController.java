@@ -41,8 +41,8 @@ public class ReviewController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid ReviewDtoIn dto) {
-        reviewService.update(id, dto);
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid ReviewDtoIn dto, HttpSession session) {
+        reviewService.update(id, (Integer) session.getAttribute("accountId"), dto);
         return ResponseEntity.ok(new ApiResponse("Review updated successfully"));
     }
 

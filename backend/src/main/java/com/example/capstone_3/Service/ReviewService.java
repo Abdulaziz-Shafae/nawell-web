@@ -101,43 +101,39 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public void update(Integer id, ReviewDtoIn dto) {
+    public void update(Integer id, Integer accountId, ReviewDtoIn dto) {
+        Account reviewer = accountAccessService.requireActive(accountId);
         Review oldReview = reviewRepository.findReviewById(id);
-
-        if (oldReview == null) {
-            throw new ApiException("No review found");
+        if (oldReview == null) throw new ApiException("No review found");
+        if (oldReview.getReviewerAccount() == null ||
+                !accountId.equals(oldReview.getReviewerAccount().getId())) {
+            throw new ApiException("Only the review author can update this review");
         }
-
-        Exchange exchange = exchangeRepository.findExchangeById(dto.getExchangeId());
-        if (exchange == null) {
-            throw new ApiException("No exchange found");
+        Exchange exchange = oldReview.getExchange();
+        if (exchange == null || !"COMPLETED".equals(exchange.getStatus())) {
+            throw new ApiException("Only completed exchanges can be reviewed");
         }
-
-        Account reviewer = accountRepository.findAccountById(dto.getReviewerAccountId());
-        if (reviewer == null) {
-            throw new ApiException("No reviewer account found");
+        LearningRequest request = exchange.getLearningRequest();
+        if (request == null || request.getRequesterAccount() == null ||
+                request.getProviderAccount() == null || oldReview.getReviewedAccount() == null) {
+            throw new ApiException("Exchange participants not found");
         }
-
-        Account reviewed = accountRepository.findAccountById(dto.getReviewedAccountId());
-        if (reviewed == null) {
-            throw new ApiException("No reviewed account found");
+        Integer learnerId = request.getRequesterAccount().getId();
+        Integer providerId = request.getProviderAccount().getId();
+        Integer expectedReviewedId = accountId.equals(learnerId) ? providerId
+                : accountId.equals(providerId) ? learnerId : null;
+        if (expectedReviewedId == null ||
+                !expectedReviewedId.equals(oldReview.getReviewedAccount().getId())) {
+            throw new ApiException("Review accounts do not belong to the exchange");
         }
-
-        if (reviewer.getId().equals(reviewed.getId())) {
-            throw new ApiException("You cannot review your own account");
+        // Associations cannot be reassigned through an edit.
+        if (!exchange.getId().equals(dto.getExchangeId()) ||
+                !accountId.equals(dto.getReviewerAccountId()) ||
+                !expectedReviewedId.equals(dto.getReviewedAccountId())) {
+            throw new ApiException("Review participants and exchange cannot be changed");
         }
-
-        Review existingReview = reviewRepository.findReviewByExchange_IdAndReviewerAccount_Id(dto.getExchangeId(), dto.getReviewerAccountId());
-        if (existingReview != null && !existingReview.getId().equals(id)) {
-            throw new ApiException("You have already reviewed this exchange");
-        }
-
         oldReview.setRating(dto.getRating());
         oldReview.setComment(dto.getComment());
-        oldReview.setExchange(exchange);
-        oldReview.setReviewerAccount(reviewer);
-        oldReview.setReviewedAccount(reviewed);
-
         reviewRepository.save(oldReview);
     }
 

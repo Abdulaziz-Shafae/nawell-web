@@ -197,7 +197,7 @@ public class TokenTransactionService {
         List<TokenTransaction>exchangeTransactions = tokenTransactionRepository.findTokenTransactionsByExchange_Id(exchangeId);
         for (TokenTransaction t:exchangeTransactions) {
             if (t.getType().equals("REFUND")) {
-                throw new ApiException("This exchange is already refunded");
+                return; // Cancellation has already performed the refund; do not issue a second credit.
             }
             if (t.getType().equals("TEACHING")) {
                 throw new ApiException("Teacher already received tokens, cannot refund");

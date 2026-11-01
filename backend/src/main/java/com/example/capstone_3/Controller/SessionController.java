@@ -69,10 +69,4 @@ public class SessionController {
         return ResponseEntity.status(200).body(sessionService.getSessionsByExchange((Integer) session.getAttribute("accountId"), exchangeId));
     }
 
-    @PostMapping("/{sessionId}/zoom")
-    public ResponseEntity<?> createZoomMeeting(@PathVariable Integer sessionId, HttpSession session) {
-
-        return ResponseEntity.status(200).body(sessionService.createZoomMeeting((Integer) session.getAttribute("accountId"), sessionId));
-    }
-
 }

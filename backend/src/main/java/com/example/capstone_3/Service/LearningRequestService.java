@@ -125,26 +125,39 @@ public class LearningRequestService {
 
     }
 
-    public void updateLearningRequest(Integer id, LearningRequest learningRequest){
-
-        LearningRequest oldRequest = learningRequestRepository.findLearningRequestById(id);
-        if (oldRequest == null) {
-            throw new ApiException("Learning request not found");
+    @Transactional
+    public void updateLearningRequest(Integer id, LearningRequest changes) {
+        LearningRequest request = learningRequestRepository.findLearningRequestById(id);
+        if (request == null) throw new ApiException("Learning request not found");
+        if (!"OPEN".equals(request.getStatus())) throw new ApiException("Only open requests can be updated");
+        if (request.getAcceptedNegotiation() != null ||
+                (request.getRequestNegotiations() != null && !request.getRequestNegotiations().isEmpty())) {
+            throw new ApiException("Cannot edit a request after negotiation has started");
         }
-        if (!oldRequest.getStatus().equals("OPEN")) {
-            throw new ApiException("Only open requests can be updated");
+        SkillOffer offer = request.getSkillOffer();
+        if (offer == null || !"ACTIVE".equals(offer.getStatus())) {
+            throw new ApiException("The linked skill offer is unavailable");
         }
-        oldRequest.setDescription(learningRequest.getDescription());
-        oldRequest.setMode(learningRequest.getMode());
-        oldRequest.setWeekend(learningRequest.getWeekend());
-        oldRequest.setBaseTokens(learningRequest.getBaseTokens());
-        oldRequest.setNeededBy(learningRequest.getNeededBy());
-        calculateExtraTokens(oldRequest);
-        if (oldRequest.getRequesterAccount().getTokenBalance() < totalTokens(oldRequest)) {
+        if (changes.getMode() == null || (!"BOTH".equals(offer.getMode()) && !offer.getMode().equals(changes.getMode()))) {
+            throw new ApiException("Requested mode is not supported by this offer");
+        }
+        if (offer.getTokenCost() == null || offer.getTokenCost() <= 0) {
+            throw new ApiException("Offer token cost is invalid");
+        }
+        request.setDescription(changes.getDescription());
+        request.setMode(changes.getMode());
+        request.setNeededBy(changes.getNeededBy());
+        request.setWeekend(Boolean.TRUE.equals(changes.getWeekend()));
+        request.setBaseTokens(offer.getTokenCost());
+        request.setUrgent(false);
+        request.setUrgentTokens(0);
+        calculateExtraTokens(request);
+        if (request.getRequesterAccount() == null ||
+                request.getRequesterAccount().getTokenBalance() == null ||
+                request.getRequesterAccount().getTokenBalance() < totalTokens(request)) {
             throw new ApiException("Not enough tokens");
         }
-        learningRequestRepository.save(oldRequest);
-
+        learningRequestRepository.save(request);
     }
 
     public void deleteLearningRequest(Integer id) {
