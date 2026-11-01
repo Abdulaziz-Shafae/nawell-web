@@ -8,6 +8,7 @@ import com.example.capstone_3.DtoIn.RegisterCompanyDtoIn;
 import com.example.capstone_3.DtoIn.RegisterIndividualDtoIn;
 import com.example.capstone_3.Service.AccountService;
 import com.example.capstone_3.Service.EmailVerificationService;
+import com.example.capstone_3.Service.PendingSignupService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class AccountController {
 
     private final AccountService accountService;
     private final EmailVerificationService emailVerificationService;
+    private final PendingSignupService pendingSignupService;
 
     @GetMapping("/get")
     public ResponseEntity<?> get(){
@@ -107,6 +109,27 @@ public class AccountController {
         emailVerificationService.verifyEmail(accountId, token);
 
         return ResponseEntity.status(200).body(new ApiResponse("Email verified successfully. You can close this page"));
+    }
+
+    @PostMapping("/signup/start/individual")
+    public ResponseEntity<?> startIndividual(@RequestBody @Valid RegisterIndividualDtoIn dto) {
+        pendingSignupService.startIndividual(dto);
+        return ResponseEntity.ok(new ApiResponse("Check your email to complete registration"));
+    }
+
+    @PostMapping("/signup/start/company")
+    public ResponseEntity<?> startCompany(@RequestBody @Valid RegisterCompanyDtoIn dto) {
+        pendingSignupService.startCompany(dto);
+        return ResponseEntity.ok(new ApiResponse("Check your email to complete registration"));
+    }
+
+    @GetMapping("/signup/confirm")
+    public ResponseEntity<?> confirmSignup(@RequestParam String token, HttpServletRequest request) {
+        Integer id=pendingSignupService.confirm(token);
+        request.getSession(true);
+        request.changeSessionId();
+        request.getSession().setAttribute("accountId",id);
+        return ResponseEntity.ok(new ApiResponse("Email verified and account created successfully"));
     }
 
     @GetMapping("/profile")
